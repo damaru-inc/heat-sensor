@@ -1,0 +1,22 @@
+{
+  "name": "heat-sensor",
+  "version": "1.0.0",
+  "description": "This is the repo for a heat sensor IOT application.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damaru-inc/heat-sensor.git"
+  },
+  "author": "Michael Davis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/damaru-inc/heat-sensor/issues"
+  },
+  "homepage": "https://github.com/damaru-inc/heat-sensor#readme",
+  "dependencies": {
+    "solclientjs": "^10.3.1"
+  }
+}
