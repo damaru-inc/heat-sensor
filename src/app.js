@@ -14,49 +14,53 @@ var config = require(configPath)
 // Setup Solace
 
 var solace = require('solclientjs')
-var factoryProps = new solace.SolclientFactoryProperties();
-factoryProps.profile = solace.SolclientFactoryProfiles.version10;
-solace.SolclientFactory.init(factoryProps);
-solace.SolclientFactory.setLogLevel(solace.LogLevel.WARN);
-var pub = new Pub(solace, config);
-pub.connect()
+var pub;
+
+init();
 doit()
+//test();
+
+function test() {
+    for (var i = 0; i < 9; i++) {
+        var a = rand(19.5, 21.5);
+        console.log("a: " + a);
+    }
+}
 
 
 // Example of the rand function we need:
 
-function(var low, var high) {
-    var value = 0;// need to figure this part out
+function rand(low, high) {
+    var range = high - low;
+    var value = Math.random() * range + low;
     return value;
-}
-
-//for (var i = 0; i < 10; i++) {
-//    play();
-//}
-
-function play() {
-    var a = Math.random();
-    var b = a + 19.5
-    console.log( "b is " + b)
 }
 
 async function doit() {
 
     await sleep(1000)
     var topic = "temp/123";
-    var temp = 19.5 + Math.random();
+    var temp = rand(19.5, 21.5)
 
     for (var i = 0; i < 10; i++) {
         var message = "temp: " + temp;
         pub.publish(message, topic)
         await sleep(1000)
-        var delta = -0.5 + Math.random();
+        var delta = rand(-0.5, 0.5)
         temp += delta;
     }
 
     pub.disconnect()
 }
 
+function init() {
+    var factoryProps = new solace.SolclientFactoryProperties();
+    factoryProps.profile = solace.SolclientFactoryProfiles.version10;
+    solace.SolclientFactory.init(factoryProps);
+    solace.SolclientFactory.setLogLevel(solace.LogLevel.WARN);
+    pub = new Pub(solace, config);
+    pub.connect()
+}
 
 function sleep(ms) {
     return new Promise(resolve => {
