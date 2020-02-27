@@ -22,7 +22,7 @@ doit()
 
 function test() {
     for (var i = 0; i < 9; i++) {
-        var a = rand(19.5, 21.5);
+        var a = rand(30.0, 33.0);
         console.log("a: " + a);
     }
 }
@@ -38,19 +38,45 @@ function rand(low, high) {
 
 async function doit() {
 
-    await sleep(1000)
-    var topic = "temp/123";
-    var temp = rand(19.5, 21.5)
+    await sleep(1000);
+    var topic = "temperature/data";
+    var temps = [];
+    var goingUp = [];
 
-    for (var i = 0; i < 10; i++) {
-        var message = "temp: " + temp;
-        pub.publish(message, topic)
-        await sleep(1000)
-        var delta = rand(-0.5, 0.5)
-        temp += delta;
+    for (var sensor = 0; sensor < 4; sensor++) {
+        temps[sensor] = rand(29.5, 31.5);
+        goingUp[sensor] = true;
     }
 
-    pub.disconnect()
+    for (var i = 0; i < 120; i++) {
+        for (var sensor = 0; sensor < 4; sensor++) {
+            let temp = temps[sensor];
+            var msg = {};
+            msg.sensorId = sensor;
+            msg.temperature = temp;
+            var message = JSON.stringify(msg);
+            pub.publish(message, topic);
+            var delta;
+            if (goingUp[sensor]) {
+                delta = rand(0.0, 0.3);
+            } else {
+                delta = rand(-0.3, 0.0);
+            }
+            temp += delta;;
+            temps[sensor] = temp;
+
+            if (temp > 35.0) {
+                goingUp[sensor] = false;
+            }
+
+            if (temp < 15.0) {
+                goingUp[sensor] = true;
+            }
+        }
+        await sleep(1000);
+    }
+
+    pub.disconnect();
 }
 
 function init() {
